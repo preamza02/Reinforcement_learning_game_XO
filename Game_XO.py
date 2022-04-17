@@ -35,7 +35,7 @@ class Game_board:
 
     def action(self,token,index): #token -1,1
         state = self.board[index]
-        if state == 1:
+        if state != 0:
             Wrong = True
         else:
             Wrong = False
