@@ -1,6 +1,6 @@
 from Game_XO import Game_board,agent
 
-def play_with_random(you_go_first = True): 
+def play_with_my_bot(you_go_first = True): 
     isEnd = False
     player_turn = you_go_first
     token = 1
@@ -47,4 +47,4 @@ def play_with_random(you_go_first = True):
         print('Draw')
     
 
-play_with_random()
+play_with_my_bot()
