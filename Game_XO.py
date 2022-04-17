@@ -176,3 +176,57 @@ class utils:
             board.reset()
         p1.saveWeight()
         p2.saveWeight()
+
+    def train_with_yourself(board,weight_path_dict,score_dict,you_go_first = True,epochs = 1): 
+        for _ in range(epochs):
+            isEnd = False
+            player_turn = you_go_first
+            token = 1
+            #Wrong,isEnd,isDraw
+            Board = Game_board()
+            if you_go_first:
+                my_agent = agent('Player2',er = 0,lr = 0.8,decay = 0.9)
+                my_agent.loadWeight(weight_path_dict[1])
+            else:
+                my_agent = agent('Player1',er = 0,lr = 0.8,decay = 0.9,token=1)
+                my_agent.loadWeight(weight_path_dict[0])
+            print('Input foramt is row,col for (row,col)')
+            print('ex. if you want to chose (0,0) please enter 0,0')
+            Board.showBoard()
+            while not isEnd:
+                if player_turn:
+                    print("Enter Your positon : ",end='')
+                    Input = input()
+                    if Input == 'q':
+                        break
+                    try:
+                        position = tuple([int(x) for x in Input.split(',')])
+                    except:
+                        print('Error Wrong format')
+                        break
+                else:
+                    position = my_agent.generate_aciton(Board)
+                    print(f'bot go for {position}')
+                Wrong,isEnd,isDraw = Board.action(token,position)
+                Board.showBoard()
+                if Wrong:
+                    print('Wrong position please Enter again')
+                else:
+                    token = -1*token
+                    player_turn = not player_turn
+            end_token = -1*token
+            if not isDraw:
+                if end_token == -1:
+                    winner = 'X'
+                    agent_reward = score_dict['Win'] if you_go_first else score_dict['Lose']
+                    my_agent.update_boardScore(agent_reward)
+                else:
+                    winner = 'O'
+                    agent_reward = score_dict['Lose'] if you_go_first else score_dict['Win']
+                    my_agent.update_boardScore(agent_reward)
+                print(f'{winner} is win')
+            else:
+                print('Draw')
+                agent_reward = score_dict['Draw2'] if you_go_first else score_dict['Draw1']
+                my_agent.update_boardScore(agent_reward)
+        my_agent.saveWeight()
